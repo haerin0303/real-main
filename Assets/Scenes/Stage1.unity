@@ -1103,8 +1103,10 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8027378416922132267, guid: e7b5d0d454df0f74896f2db7c26e211f, type: 3}
   spawnPoint: {fileID: 1708351703}
   moveInterval: 0.1
-  stageTime: 5
+  stageTime: 40
   timerText: {fileID: 0}
+  stage1UI: {fileID: 0}
+  stage2UI: {fileID: 0}
 --- !u!4 &1442669031
 Transform:
   m_ObjectHideFlags: 0

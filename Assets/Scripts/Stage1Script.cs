@@ -1,26 +1,74 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement; // 씬 전환용
+using UnityEngine.UI; // UI 텍스트용
 
 public class Stage1Script : MonoBehaviour
 {
-    public GameObject bulletPrefab;
-    public Transform spawnPoint;
-    public float moveInterval = 0.1f;
-    // public float fallInterval = 0.5f;
-    // public float moveSpeedVertical = 1f;
-    // public float moveSpeedHorizontal = 2f;
-    // public int bulletCount = 10;
-    // public float fallDistance = 10f;
+    public GameObject bulletPrefab; // 생성할 총알 프리팹
+    public Transform spawnPoint; // 총알 생성 위치
+    public float moveInterval = 0.1f; // 총알 생성 간격
+    public float stageTime = 40f; // 스테이지 제한 시간
+    public Text timerText; // UI 텍스트로 남은 시간 표시
 
-   // private bool isGenerating = false;
-    private Vector3 horizontalStartPosition;
-    private List<GameObject> currentBullets = new List<GameObject>();
+    private Vector3 horizontalStartPosition; // 수평 이동 시작 위치
+    private List<GameObject> currentBullets = new List<GameObject>(); // 현재 생성된 총알들
+    private bool isStageOver = false; // 스테이지 종료 여부 체크
 
     void Start()
     {
         horizontalStartPosition = spawnPoint.position;
-        StartCoroutine(GenerateHorizontalLine());
+
+        StartCoroutine(GenerateHorizontalLine()); // 첫 번째 라인 생성
+        StartCoroutine(StageTimer()); // 타이머 시작
+    }
+
+    IEnumerator StageTimer()
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < stageTime)
+        {
+            elapsedTime += Time.deltaTime;
+
+            // UI 텍스트에 남은 시간 표시 (필요 시 유지)
+            if (timerText != null)
+            {
+                timerText.text = "Time Left: " + (stageTime - elapsedTime).ToString("F2");
+            }
+
+            // 콘솔에 남은 시간 표시
+            Debug.Log("Time Left: " + (stageTime - elapsedTime).ToString("F2"));
+
+            yield return null;
+        }
+
+        EndStage(); // 타이머가 끝난 후 스테이지 종료 처리
+    }
+
+    public GameObject stage1UI; // Stage 1 UI
+    public GameObject stage2UI; // Stage 2 UI
+    void EndStage()
+    {
+        if (isStageOver) return;
+
+        isStageOver = true;
+        StopAllCoroutines(); // 모든 코루틴 멈추기
+        Debug.Log("Stage 1 Complete! Preparing for Stage 2...");
+        
+        // Stage1 UI 비활성화, Stage2 UI 활성화
+        stage1UI.SetActive(false);
+        stage2UI.SetActive(true);
+
+        // Stage2 씬 로드
+        LoadNextStage();
+    }
+
+    void LoadNextStage()
+    {
+        // 씬 전환: Stage 2 씬을 로드
+        SceneManager.LoadScene("Stage2");
     }
 
     IEnumerator GenerateHorizontalLine()
