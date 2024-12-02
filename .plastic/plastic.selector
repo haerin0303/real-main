@@ -1,0 +1,4 @@
+repository "sunrinsurviver@jshark0303@cloud"
+  path "/"
+    br "/main"
+    co "/main"
